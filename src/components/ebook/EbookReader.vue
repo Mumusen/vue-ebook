@@ -7,7 +7,7 @@
 <script type='text/ecmascript-6'>
 import { ebookMixin } from '../../utils/mixin'
 import Epub from 'epubjs'
-import { getFontFamily, saveFontFamily } from '../../utils/localStorage'
+import { getFontFamily, saveFontFamily, getFontSize, saveFontSize } from '../../utils/localStorage'
 global.ePub = Epub
 export default {
   mixins: [ebookMixin],
@@ -37,6 +37,24 @@ export default {
       this.setSettingVisible(-1)
       this.setFontFamilyVisible(false)
     },
+    initFontFamily () {
+      let font = getFontFamily(this.fileName)
+      if (!font) {
+        saveFontFamily(this.fileName, this.defaultFontFamily)
+      } else {
+        this.rendition.themes.font(font)
+        this.setDefaultFontFamily(font)
+      }
+    },
+    initFontSize () {
+      let fontSize = getFontSize(this.fileName)
+      if (!fontSize) {
+        saveFontSize(this.fileName, this.defaultFontSize)
+      } else {
+        this.rendition.themes.font(fontSize)
+        this.setDefaultFontSize(fontSize)
+      }
+    },
     initEpub () {
       const baseUrl = 'http://192.168.0.41:8081/epub/' + this.fileName + '.epub'
       this.book = new Epub(baseUrl)
@@ -47,10 +65,8 @@ export default {
         method: 'default'
       })
       this.rendition.display().then(() => {
-        let font = getFontFamily(this.fileName)
-        if (!font) {
-          saveFontFamily(this.fileName)
-        }
+        this.initFontSize()
+        this.initFontFamily()
       })
       this.rendition.on('touchstart', event => {
         // console.log(event)
