@@ -2,10 +2,10 @@
   <transition name="slide-up">
     <div class="setting-wrapper" v-show="menuVisible && settingVisible === 2">
       <div class="setting-progress">
-        <!-- <div class="read-time-wrapper">
+        <div class="read-time-wrapper">
           <span class="read-time-text">{{getReadTimeText()}}</span>
           <span class="icon-forward"></span>
-        </div> -->
+        </div>
         <div class="progress-wrapper">
           <div class="progress-icon-wrapper" @click="prevSection()">
             <span class="icon-back"></span>
@@ -24,7 +24,7 @@
           </div>
         </div>
         <div class="text-wrapper">
-          <!-- <span class="progress-section-text">{{getSectionName}}</span> -->
+          <span class="progress-section-text">{{getSectionName}}</span>
           <span>({{bookAvailable ? progress + '%' : '加载中...'}})</span>
         </div>
       </div>
@@ -34,23 +34,62 @@
 
 <script type='text/ecmascript-6'>
 import { ebookMixin } from '../../utils/mixin'
+import { getReadTime } from '../../utils/localStorage'
 export default {
   mixins: [ebookMixin],
   methods: {
     onProgressChange (progress) {
       this.setProgress(progress).then(() => {
         this.displayProgress()
+        this.updateProgressBg()
       })
     },
     onProgressInput (progress) {
-      this.setProgress(progress)
+      this.setProgress(progress).then(() => {
+        this.updateProgressBg()
+      })
     },
     displayProgress () {
       const cfi = this.currentBook.locations.cfiFromPercentage(this.progress / 100)
-      this.currentBook.rendition.display(cfi)
+      this.display(cfi)
     },
-    prevSection () {},
-    nextSection () {}
+    updateProgressBg () {
+      this.$refs.progress.style.backgroundSize = `${this.progress}% 100%`
+    },
+    prevSection () {
+      if (this.section > 0 && this.bookAvailable) {
+        this.setSection(this.section - 1).then(() => {
+          this.displaySection()
+        })
+      }
+    },
+    nextSection () {
+      if (this.section < this.currentBook.spine.length - 1 && this.bookAvailable) {
+        this.setSection(this.section + 1).then(() => {
+          this.displaySection()
+        })
+      }
+    },
+    displaySection () {
+      const sectionInfo = this.currentBook.section(this.section)
+      if (sectionInfo && sectionInfo.href) {
+        this.display(sectionInfo.href)
+      }
+    },
+    getReadTimeText () {
+      return this.$t('book.haveRead').replace('$1', this.getReadTimeByMinute())
+    },
+    getReadTimeByMinute () {
+      const readtTime = getReadTime(this.fileName)
+      if (!readtTime) {
+        return 0
+      } else {
+        return Math.ceil(readtTime / 60)
+      }
+    }
+  },
+  updated () {
+    this.updateProgressBg()
   }
 }
 </script>
