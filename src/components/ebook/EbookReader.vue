@@ -35,12 +35,6 @@ export default {
       }
       this.setMenuVisible(!this.menuVisible)
     },
-    hideTitleAndMenu () {
-      // this.$store.dispatch('setMenuVisible', !this.menuVisible)
-      this.setMenuVisible(false)
-      this.setSettingVisible(-1)
-      this.setFontFamilyVisible(false)
-    },
     initFontFamily () {
       let font = getFontFamily(this.fileName)
       if (!font) {
@@ -71,6 +65,14 @@ export default {
       })
       this.rendition.themes.select(defaultTheme)
     },
+    parseBook () {
+      this.book.loaded.cover.then(cover => {
+        this.book.archive.createUrl(cover).then(url => {
+          // console.log(url)
+          this.setCover(url)
+        })
+      })
+    },
     initRendition () {
       this.rendition = this.book.renderTo('read', {
         width: innerWidth,
@@ -83,6 +85,7 @@ export default {
         this.initFontSize()
         this.initFontFamily()
         this.initGlobalStyle()
+        this.parseBook()
       })
       this.rendition.hooks.content.register(contents => {
         Promise.all([
