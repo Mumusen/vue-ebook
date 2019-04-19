@@ -5,22 +5,31 @@
         <div class="slide-contents-search-icon">
           <span class="icon-search"></span>
         </div>
-        <input type="text" class="slide-contents-search-input" :placeholder="$t('book.searchHint')" @click="showSearchPage">
+        <input class="slide-contents-search-input"
+        type="text"
+        :placeholder="$t('book.searchHint')"
+        @click="showSearchPage">
       </div>
-      <div class="slide-contents-search-cancel" v-if="searchVisible" @click="hideSearchPage()">{{ $t('book.cancel') }}</div>
+      <div class="slide-contents-search-cancel"
+      v-if="searchVisible"
+      @click="hideSearchPage()">{{ $t('book.cancel') }}</div>
     </div>
     <div class="slide-contents-book-wrapper">
       <div class="slide-contents-book-img-wrapper">
         <img class="slide-contents-book-img" :src="cover">
       </div>
       <div class="slide-contents-book-info-wrapper">
-        <div class="slide-contents-book-title"></div>
-        <div class="slide-contents-book-author"></div>
+        <div class="slide-contents-book-title">
+          <span class="slide-contents-book-title-text">{{metadata.title}}</span>
+        </div>
+        <div class="slide-contents-book-author">
+          <span class="slide-contents-book-author-text">{{metadata.creator}}</span>
+        </div>
       </div>
       <div class="slide-contents-book-progress-wrapper">
         <div class="slide-contents-book-progress">
           <span class="progress">{{ progress + '%' }}</span>
-          <div class="progress-text">{{ $t('book.haveRead2') }}</div>
+          <span class="progress-text">{{ $t('book.haveRead2') }}</span>
         </div>
         <div class="slide-contents-book-time">{{ getReadTimeText() }}</div>
       </div>
@@ -113,7 +122,7 @@ export default {
           box-sizing: border-box;
           @include left;
           .slide-contents-book-title-text {
-            @include ellipsis2(1);
+            @include ellipsis2(2);
           }
         }
         .slide-contents-book-author {

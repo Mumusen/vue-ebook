@@ -72,6 +72,9 @@ export default {
           this.setCover(url)
         })
       })
+      this.book.loaded.metadata.then(metadata => {
+        this.setMetadata(metadata)
+      })
     },
     initRendition () {
       this.rendition = this.book.renderTo('read', {
