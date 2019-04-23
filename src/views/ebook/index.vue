@@ -1,5 +1,5 @@
 <template>
-  <div class="ebook">
+  <div class="ebook" ref="ebook">
     <ebook-title></ebook-title>
     <ebook-reader></ebook-reader>
     <ebook-menu></ebook-menu>
@@ -19,7 +19,18 @@ export default {
     EbookTitle,
     EbookMenu
   },
+  watch: {
+    offsetY (v) {
+      if (v > 0) {
+        this.move(v)
+      }
+    }
+  },
   methods: {
+    move (v) {
+      console.log(v)
+      // this.$refs.ebook.style.top = v + 'px'
+    },
     startLoopReadTime () {
       let readTime = getReadTime(this.fileName)
       if (!readTime) {

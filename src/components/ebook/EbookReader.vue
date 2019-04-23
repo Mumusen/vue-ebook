@@ -25,7 +25,7 @@ export default {
       e.preventDefault()
       e.stopPropagation()
     },
-    moveEnd () {
+    moveEnd (e) {
       this.setOffsetY(0)
       this.firstOffsetY = null
     },
@@ -56,6 +56,22 @@ export default {
         this.hideTitleAndMenu()
       }
     },
+    toggleTitleAndMenu () {
+      if (this.menuVisible) {
+        this.setSettingVisible(-1)
+        this.setFontFamilyVisible(false)
+      }
+      this.setMenuVisible(!this.menuVisible)
+    },
+    initFontSize () {
+      let fontSize = getFontSize(this.fileName)
+      if (!fontSize) {
+        saveFontSize(this.fileName, this.defaultFontSize)
+      } else {
+        this.rendition.themes.fontSize(fontSize)
+        this.setDefaultFontSize(fontSize)
+      }
+    },
     showTitleAndMenu () {
       if (this.menuVisible) {
         this.setSettingVisible(-1)
@@ -70,15 +86,6 @@ export default {
       } else {
         this.rendition.themes.font(font)
         this.setDefaultFontFamily(font)
-      }
-    },
-    initFontSize () {
-      let fontSize = getFontSize(this.fileName)
-      if (!fontSize) {
-        saveFontSize(this.fileName, this.defaultFontSize)
-      } else {
-        this.rendition.themes.font(fontSize)
-        this.setDefaultFontSize(fontSize)
       }
     },
     initTheme () {
